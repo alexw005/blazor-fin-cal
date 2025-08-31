@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  blazor-financial:
+    build: .
+    ports:
+      - "5000:5000"
+      - "5001:5001"

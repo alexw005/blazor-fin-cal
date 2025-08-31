@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  blazor-dev:
+    image: mcr.microsoft.com/dotnet/sdk:9.0-alpine3.22-amd64  # SDK image for .NET 9
+    container_name: blazor-dev
+    volumes:
+      - .:/app   # Mount local folder into container
+    working_dir: /app
+    command: tail -f /dev/null
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+# docker exec -it blazor-dev /bin/sh
+# dotnet run --urls http://0.0.0.0:5000
