@@ -1,7 +1,61 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Financial Calculator</PageTitle>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+<div>
+    <label>Principal:</label>
+    <input type="number" @bind="principal" />
+</div>
+
+<div>
+    <label>Annual Rate (%):</label>
+    <input type="number" @bind="annualRate" />
+</div>
+
+<div>
+    <label>Time (years):</label>
+    <input type="number" @bind="years" />
+</div>
+
+<div>
+    <button @onclick="Calculate">Calculate Interest</button>
+</div>
+
+
+@if (result != null)
+{
+    <p>Total Interest = @result</p>
+    <p>Total Payment = @totalPayment</p>
+    <p>Montly Payment = @monthlyPayment</p>
+
+}
+
+@code {
+    private double principal { get; set; }
+    private double annualRate { get; set; }
+    private int years { get; set; }
+    private double? result { get; set; }
+    private double? totalPayment { get; set; }
+    private double? monthlyPayment { get; set; }
+    
+        
+        
+    private void Calculate()
+    {
+        double monthlyRate = (annualRate / 100) / 12;
+        int months = years * 12;
+
+        // Calculate Monthly Payment (EMI) using the formula:
+        // M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1]
+        // Where:
+        // M = Monthly Payment
+        // P = Principal Loan Amount
+        // i = Monthly Interest Rate
+        // n = Number of Months
+        monthlyPayment = principal * (monthlyRate * Math.Pow(1 + monthlyRate, months)) / (Math.Pow(1 + monthlyRate, months) - 1);
+
+        totalPayment = monthlyPayment * months;
+        result = totalPayment - principal;
+    }
+}
