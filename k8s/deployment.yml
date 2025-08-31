@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: fincal
+  name: blazor-fincal-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: web
+  template:
+    metadata:
+      labels:
+        component: web
+    spec:
+      containers:
+        - name: blazorwasm
+          image: fswoon2/blazor-fincal:latest # replace with your built image
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 80
+        
