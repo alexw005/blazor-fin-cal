@@ -1,27 +1,29 @@
 ﻿@page "/"
 
 <PageTitle>Financial Calculator</PageTitle>
+<EditForm Model="@calcModel" OnValidSubmit="@Calculate">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Principal Amount</label>
+            <InputNumber @bind-Value="calcModel.Principal" class="input" />
+        </div>
 
-<div>
-    <label>Principal:</label>
-    <input type="number" @bind="principal" />
-</div>
+        <div class="form-group">
+            <label>Interest Rate (%)</label>
+            <InputNumber @bind-Value="calcModel.AnnualRate" class="input" />
+        </div>
 
-<div>
-    <label>Annual Rate (%):</label>
-    <input type="number" @bind="annualRate" />
-</div>
+        <div class="form-group">
+            <label>Years</label>
+            <InputNumber @bind-Value="calcModel.Years" class="input" />
+        </div>
+    </div>
 
-<div>
-    <label>Time (years):</label>
-    <input type="number" @bind="years" />
-</div>
-
-<div>
-    <button @onclick="Calculate">Calculate Interest</button>
-</div>
-
+    <button type="submit" class="btn">Calculate</button>
+</EditForm>
 
 @if (result != null)
 {
@@ -31,6 +33,19 @@
 
 }
 
+@if (result.HasValue)
+{
+    <div class="result-box">
+        <strong>Total Interest:</strong> @result.Value.ToString("C")
+    </div>
+     <div class="result-box">
+        <strong>Total Payment:</strong> @totalPayment.Value.ToString("C")
+    </div>
+     <div class="result-box">
+        <strong>Montly Payment:</strong> @monthlyPayment.Value.ToString("C")
+    </div>
+}
+
 @code {
     private double principal { get; set; }
     private double annualRate { get; set; }
@@ -38,13 +53,20 @@
     private double? result { get; set; }
     private double? totalPayment { get; set; }
     private double? monthlyPayment { get; set; }
-    
+    public class CalcModel
+    {
+        public double Principal { get; set; }
+        public double AnnualRate { get; set; }
+        public int Years { get; set; }
+    }
+    private CalcModel calcModel = new();
+
         
         
     private void Calculate()
     {
-        double monthlyRate = (annualRate / 100) / 12;
-        int months = years * 12;
+        double monthlyRate = (calcModel.AnnualRate / 100) / 12;
+        int months = calcModel.Years * 12;
 
         // Calculate Monthly Payment (EMI) using the formula:
         // M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1]
@@ -53,9 +75,10 @@
         // P = Principal Loan Amount
         // i = Monthly Interest Rate
         // n = Number of Months
-        monthlyPayment = principal * (monthlyRate * Math.Pow(1 + monthlyRate, months)) / (Math.Pow(1 + monthlyRate, months) - 1);
+        monthlyPayment = calcModel.Principal * (monthlyRate * Math.Pow(1 + monthlyRate, months)) / (Math.Pow(1 + monthlyRate, months) - 1);
 
         totalPayment = monthlyPayment * months;
-        result = totalPayment - principal;
+        result = totalPayment - calcModel.Principal;
     }
+    
 }
